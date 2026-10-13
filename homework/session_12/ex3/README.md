@@ -1,29 +1,56 @@
-
-# Bài 3: Tách biệt luồng CI/CD đa môi trường với GitHub Environments
+# Bài 3: 
 
 ## 1. Mục tiêu
-- Tạo hai môi trường staging và production trên GitHub.
-- Tự động chạy job staging khi push vào nhánh develop.
-- Yêu cầu phê duyệt thủ công trước khi job production chạy khi push vào nhánh main.
+
+- Quản lý hai môi trường triển khai: Staging và Production.
+- Tự động chạy job Staging khi push code lên nhánh `develop`.
+- Yêu cầu phê duyệt thủ công trước khi job Production chạy khi push code lên nhánh `main`.
+- Sử dụng GitHub Environments để kiểm soát luồng triển khai.
 
 ## 2. Công nghệ sử dụng
+
 - Git và GitHub
 - GitHub Actions
 - GitHub Environments
-- Ubuntu WSL
+- Ubuntu trên WSL
 
 ## 3. Cấu hình workflow
-File workflow chính: `.github/workflows/cd-multi-env.yml`
 
-- `deploy-staging`: chạy trên nhánh develop, sử dụng environment staging.
-- `deploy-prod`: chạy trên nhánh main, sử dụng environment production.
-- Production sử dụng Required reviewers để yêu cầu phê duyệt trước khi triển khai.
+File workflow: `.github/workflows/cd-multi-env.yml`
+
+### 3.1. Môi trường Staging
+
+- Environment: `staging`
+- Nhánh kích hoạt: `develop`
+- Job: `Deploy to Staging`
+- Kết quả: **Success**
+
+### 3.2. Môi trường Production
+
+- Environment: `production`
+- Nhánh kích hoạt: `main`
+- Job: `Deploy to Production`
+- Bật quy tắc `Required reviewers` để yêu cầu phê duyệt thủ công.
+- Kết quả: Workflow chuyển sang trạng thái `Waiting` trước khi được phê duyệt.
 
 ## 4. Kết quả kiểm thử
-- Staging: sẽ cập nhật kết quả sau khi push nhánh develop và kiểm tra GitHub Actions.
-- Production: sẽ cập nhật kết quả sau khi push nhánh main và kiểm tra trạng thái Waiting for review.
-- Phê duyệt deployment: sẽ cập nhật kết quả sau khi kiểm tra nút Approve and deploy.
 
-## 5. Sản phẩm nộp
+| Trường hợp kiểm thử | Kết quả mong đợi | Kết quả thực tế |
+|---|---|---|
+| Push nhánh `develop` | Job Staging chạy tự động | Thành công |
+| Push nhánh `main` | Production chờ phê duyệt | Thành công |
+| Chưa phê duyệt Production | Job triển khai chưa được tiếp tục | Thành công |
+| Phê duyệt Production | Job Production tiếp tục chạy | Thành công |
+| Kiểm tra kết quả cuối cùng | Workflow hoàn tất | `Success` |
+
+## 5. Kết luận
+
+Đã cấu hình và kiểm thử thành công luồng CI/CD đa môi trường bằng GitHub Actions và GitHub Environments. Môi trường Staging chạy theo nhánh `develop`; môi trường Production chạy theo nhánh `main` và yêu cầu phê duyệt trước khi tiếp tục.
+
+**Lưu ý:** Các bước triển khai trong workflow hiện tại được mô phỏng bằng lệnh `echo`, chưa thực hiện triển khai ứng dụng lên máy chủ thực tế.
+
+## 6. Sản phẩm nộp
+
 - File `.github/workflows/cd-multi-env.yml`
-- Ảnh chụp màn hình Production chờ phê duyệt.
+- File báo cáo `homework/session_12/ex3/README.md`
+- Ảnh chụp màn hình Production ở trạng thái `Waiting` trước khi phê duyệt.
